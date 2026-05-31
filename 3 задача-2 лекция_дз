@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int N, M;
+    scanf("%d %d", &N, &M);
+
+    int **a = malloc(N * sizeof(int *));
+    for (int i = 0; i < N; i++) {
+        a[i] = malloc(M * sizeof(int));
+    }
+
+    int **t = malloc(M * sizeof(int *));
+    for (int i = 0; i < M; i++) {
+        t[i] = malloc(N * sizeof(int));
+    }
+
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < M; j++) {
+            scanf("%d", &a[i][j]);
+        }
+    }
+
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < M; j++) {
+            t[j][i] = a[i][j];
+        }
+    }
+
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            printf("%d ", t[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < N; i++) {
+        free(a[i]);
+    }
+    free(a);
+
+    for (int i = 0; i < M; i++) {
+        free(t[i]);
+    }
+    free(t);
+
+    return 0;
+}
