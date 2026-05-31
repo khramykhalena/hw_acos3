@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void add_to_buffer(char **buffer, size_t *size, size_t *length, const char *text, size_t text_len) {
+    while (*length + text_len + 1 > *size) {
+        *size *= 2;
+        *buffer = realloc(*buffer, *size);
+    }
+
+    memcpy(*buffer + *length, text, text_len);
+    *length += text_len;
+    (*buffer)[*length] = '\0';
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        return 1;
+    }
+
+    char *pattern = argv[1];
+    char *text = argv[2];
+    char *replacement = argv[3];
+
+    regex_t regex;
+    regmatch_t match;
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return 1;
+    }
+
+    size_t size = strlen(text) + 1;
+    char *result = malloc(size);
+    result[0] = '\0';
+
+    size_t length = 0;
+    char *current = text;
+    size_t replacement_len = strlen(replacement);
+
+    while (regexec(&regex, current, 1, &match, 0) == 0) {
+        add_to_buffer(&result, &size, &length, current, match.rm_so);
+        add_to_buffer(&result, &size, &length, replacement, replacement_len);
+
+        current += match.rm_eo;
+
+        if (match.rm_so == match.rm_eo) {
+            add_to_buffer(&result, &size, &length, current, 1);
+            current++;
+        }
+    }
+
+    add_to_buffer(&result, &size, &length, current, strlen(current));
+
+    printf("%s\n", result);
+
+    free(result);
+    regfree(&regex);
+
+    return 0;
+}
