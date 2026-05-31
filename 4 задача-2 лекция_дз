@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node *reverse(Node *head) {
+    Node *prev = NULL;
+    Node *current = head;
+    Node *next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+
+    return prev;
+}
+
+int main() {
+    Node *head = NULL;
+    Node *tail = NULL;
+    int x;
+
+    while (1) {
+        scanf("%d", &x);
+
+        if (x == 0) {
+            break;
+        }
+
+        Node *newNode = malloc(sizeof(Node));
+        newNode->value = x;
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+    }
+
+    head = reverse(head);
+
+    Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+
+    printf("\n");
+
+    current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+
+    return 0;
+}
